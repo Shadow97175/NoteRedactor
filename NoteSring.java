@@ -7,36 +7,47 @@ import java.util.List;
  * Created by gifin_000 on 13.03.2016.
  */
 public class NoteString {
-    private List<PositionedNote>[] notes;
+    private List<Element> notes;
 
     public NoteString(){
-        notes = new List[21];
-
-        for(int i = 0; i < notes.length; ++i)
-            notes[i] = new ArrayList<PositionedNote>();
-
+        notes = new ArrayList<Element>();
     }
 
-    private int count()
+    public int count()
     {
-        int sum = 0;
-        for (List<PositionedNote> note : notes) sum += note.size();
-        return sum;
+        return notes.size();
     }
 
-
-    public void addNote(Note note){
-        int line = note.noteSound.ordinal() + (note.octave + 1) * 7;
-        notes[line].add(new PositionedNote(note,count()));
+    public void addNote(Element note){
+        notes.add(note);
     }
 
+    public void addNote(int i, Element note){
+        if(i < notes.size())
+            notes.add(i, note);
+        else
+            notes.add(note);
+    }
+
+    public void removeNote(int i){
+        if(i >= 0 && i < notes.size())
+            notes.remove(i);
+    }
 
     public int size(){
-        return notes.length;
+        return 21;
     }
 
-    public List<PositionedNote> getNotes(int i){
-        return notes[i];
+    public Element getNote(int i)
+    {
+        return notes.get(i);
     }
 
+    public int findNote(int startTime, int line) {
+        for(int i = 0; i < notes.size(); i++){
+            if (notes.get(i).getStartTime() == startTime && notes.get(i).getLine() == line)
+                return i;
+        }
+        return -1;
+    }
 }
