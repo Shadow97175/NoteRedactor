@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
  */
 public class AddNoteDialog extends JDialog {
 
-    private Note note;
+    private Element note;
 
     public AddNoteDialog(JFrame parent)
     {
@@ -35,11 +35,12 @@ public class AddNoteDialog extends JDialog {
 
         setSize(new Dimension(300,100));
 
-        JLabel noteSound = new JLabel("Note");
+        final JLabel noteSound = new JLabel("Note");
         p1.add(noteSound);
         final JComboBox noteSoundInput = new JComboBox();
         for(NoteSound s : NoteSound.values())
             noteSoundInput.addItem(s.toString());
+        noteSoundInput.addItem("Pause");
         p1.add(noteSoundInput);
         add(p1);
 
@@ -69,13 +70,21 @@ public class AddNoteDialog extends JDialog {
         addNoteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                NoteSound sound = NoteSound.valueOf(noteSoundInput.getSelectedItem().toString());
-                int octave = Integer.parseInt(octaveInput.getSelectedItem().toString());
-                octave = octave > 0 ? (octave - 1) : octave;
-                int length = (int) (Math.log(Integer.parseInt(lengthInput.getSelectedItem().toString().substring(2)))/Math.log(2));
+
+                int length = (int) (Math.log(Integer.parseInt(lengthInput.getSelectedItem().toString().substring(2))) / Math.log(2));
                 boolean dot = dotInput.isSelected();
-                NoteLength noteLength = new NoteLength(length,dot);
-                AddNoteDialog.this.note = new Note(octave,sound,noteLength);
+                NoteLength noteLength = new NoteLength(length, dot);
+
+                if (noteSoundInput.getSelectedIndex() == 7)
+                {
+                    AddNoteDialog.this.note = new Pause(noteLength, 0);
+                }
+                else {
+                    NoteSound sound = NoteSound.valueOf(noteSoundInput.getSelectedItem().toString());
+                    int octave = Integer.parseInt(octaveInput.getSelectedItem().toString());
+                    octave = octave > 0 ? (octave - 1) : octave;
+                    AddNoteDialog.this.note = new Note(octave, sound, noteLength, 0);
+                }
                 setVisible(false);
                 dispose();
             }
@@ -93,7 +102,7 @@ public class AddNoteDialog extends JDialog {
 
     }
 
-    public Note getValue() {
+    public Element getValue() {
         return note;
     }
 
